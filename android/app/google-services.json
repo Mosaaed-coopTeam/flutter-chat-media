@@ -1,34 +1,41 @@
 {
   "project_info": {
-    "project_number": "188388605372",
-    "firebase_url": "https://dedatom-chat.firebaseio.com",
-    "project_id": "dedatom-chat",
-    "storage_bucket": "dedatom-chat.appspot.com"
+    "project_number": "776832943342",
+    "project_id": "minist-9fc17",
+    "storage_bucket": "minist-9fc17.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:188388605372:android:22ead2ebb36e54f1cabfb9",
+        "mobilesdk_app_id": "1:776832943342:android:fd45a8de7c113688e11fff",
         "android_client_info": {
-          "package_name": "co.arpitsachan.dedatom_chat"
+          "package_name": "sa.gov.mim.mim_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "188388605372-2t5lee6q149rq5977t7vfjdijoag0a6u.apps.googleusercontent.com",
+          "client_id": "776832943342-9r0ovcp55rlaba6dsh1m4svv363hki8l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sa.gov.mim.mim_app",
+            "certificate_hash": "9f5d151ffa675a1acc05141cbc65b9104c554fd0"
+          }
+        },
+        {
+          "client_id": "776832943342-d2ek8f6gv1qdandq5ers7r7iu865ipgi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAlZVqhJFAFO-rUOzDxhKev5CQoGNOQrCM"
+          "current_key": "AIzaSyBCaNf54tICn6pam8SV8Q77wRcEjpLgQ-U"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "188388605372-2t5lee6q149rq5977t7vfjdijoag0a6u.apps.googleusercontent.com",
+              "client_id": "776832943342-d2ek8f6gv1qdandq5ers7r7iu865ipgi.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

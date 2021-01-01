@@ -9,7 +9,6 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class HomeScreen extends StatefulWidget {
   final String currentUserId;
   HomeScreen({@required this.currentUserId});
@@ -19,7 +18,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-
   HomeScreenState({@required this.currentUserId});
 
   final String currentUserId;
@@ -30,9 +28,8 @@ class HomeScreenState extends State<HomeScreen> {
 
   bool showSpinner = false;
 
-
   Future<Null> onBackPress() async {
-   Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   Future<Null> handleSignOut() async {
@@ -43,7 +40,8 @@ class HomeScreenState extends State<HomeScreen> {
     await FirebaseAuth.instance.signOut();
     await googleSignIn.disconnect();
     await googleSignIn.signOut();
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> WelcomeScreen()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => WelcomeScreen()));
     this.setState(() {
       showSpinner = false;
     });
@@ -59,30 +57,27 @@ class HomeScreenState extends State<HomeScreen> {
           color: Color(0xFF162447),
         ),
         backgroundColor: Colors.white,
-        title: Text(
-          'dedatom_chat',
-          style: TextStyle(color: Color(0xFF162447),
-              fontFamily: 'NotoSans',
-              fontWeight: FontWeight.bold
-          ),
-        ),
+        title: Text('Home',
+            style: TextStyle(
+                color: Color(0xFF162447),
+                fontFamily: 'NotoSans',
+                fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: WillPopScope(
         child: Stack(
           children: <Widget>[
             // List
+
             Container(
               child: StreamBuilder(
                 stream: Firestore.instance.collection('users').snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF162447)),
-                      ),
-                    );
+                        child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xFF162447))));
                   } else {
                     return ListView.builder(
                       padding: EdgeInsets.all(10.0),
@@ -94,7 +89,6 @@ class HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-
           ],
         ),
         onWillPop: onBackPress,
@@ -106,6 +100,85 @@ class HomeScreenState extends State<HomeScreen> {
     if (document['id'] == currentUserId) {
       return Container();
     } else {
+      return ListTile(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                        displayId: document.documentID,
+                        displayImage: document['photoUrl'],
+                        currentUserId: currentUserId,
+                        name: document['name'],
+                      )));
+        },
+        leading: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            radius: 30,
+            child: Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(color: Colors.green, width: 1.5),
+                shape: BoxShape.circle,
+              ),
+              child: Container(
+                  // clipBehavior: Clip.antiAlias,
+                  padding: EdgeInsets.all(2),
+                  child: Material(
+                      child: document['photoUrl'] != null
+                          ? CachedNetworkImage(
+                              placeholder: (context, url) => Container(
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 1.0,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF162447))),
+                                width: 50.0,
+                                height: 50.0,
+                                padding: EdgeInsets.all(5.0),
+                              ),
+                              imageUrl: document['photoUrl'],
+                              width: 50.0,
+                              height: 50.0,
+                              fit: BoxFit.fill,
+                            )
+                          : Icon(Icons.account_circle,
+                              size: 50.0, color: Colors.grey),
+                      borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                      clipBehavior: Clip.antiAlias)
+
+                  // Image.asset('assets/images/businessman.png',
+                  //     fit: BoxFit.fill),
+                  ),
+            )),
+        title: Text('${document['name']}',
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                height: 1.0)),
+        subtitle: Text("المسمي الوظيفي",
+            style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.normal,
+                color: Colors.grey,
+                height: 1.0)),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+                margin: EdgeInsets.all(5),
+                height: 10,
+                width: 10,
+                decoration:
+                    BoxDecoration(color: Colors.green, shape: BoxShape.circle)),
+            Text("متصل",
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w100)),
+          ],
+        ),
+      );
+
+//
       return Container(
         child: FlatButton(
           child: Row(
@@ -113,78 +186,73 @@ class HomeScreenState extends State<HomeScreen> {
               Material(
                 child: document['photoUrl'] != null
                     ? CachedNetworkImage(
-                  placeholder: (context, url) =>
-                      Container(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 1.0,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Color(0xFF162447)),
+                        placeholder: (context, url) => Container(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1.0,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xFF162447)),
+                          ),
+                          width: 50.0,
+                          height: 50.0,
+                          padding: EdgeInsets.all(15.0),
                         ),
+                        imageUrl: document['photoUrl'],
                         width: 50.0,
                         height: 50.0,
-                        padding: EdgeInsets.all(15.0),
-                      ),
-                  imageUrl: document['photoUrl'],
-                  width: 50.0,
-                  height: 50.0,
-                  fit: BoxFit.cover,
-                )
-                    : Icon(
-                  Icons.account_circle,
-                  size: 50.0,
-                  color: Colors.grey,
-                ),
+                        fit: BoxFit.cover,
+                      )
+                    : Icon(Icons.account_circle,
+                        size: 50.0, color: Colors.grey),
                 borderRadius: BorderRadius.all(Radius.circular(25.0)),
                 clipBehavior: Clip.hardEdge,
               ),
               Expanded(
                 child: Container(
                   width: 100.0,
-                    height: 33.0,
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              '${document['name']}',
-                              style: TextStyle(color: Color(0xFF162447),
-                              fontSize: 20.0,
-                                  fontFamily: 'NotoSans',
-                              fontWeight: FontWeight.bold),
-                            ),
-                            alignment: Alignment.centerLeft,
-                            margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
+                  height: 33.0,
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          child: Text(
+                            '${document['name']}',
+                            style: TextStyle(
+                                color: Color(0xFF162447),
+                                fontSize: 20.0,
+                                fontFamily: 'NotoSans',
+                                fontWeight: FontWeight.bold),
                           ),
+                          alignment: Alignment.centerLeft,
+                          margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
                         ),
-                        
-                      ],
-                    ),
-                    margin: EdgeInsets.only(left: 20.0),
+                      ),
+                    ],
                   ),
+                  margin: EdgeInsets.only(left: 20.0),
+                ),
               ),
-
             ],
           ),
           onPressed: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        ChatScreen(
-                    displayId: document.documentID,
-                    displayImage: document['photoUrl'],
+                    builder: (context) => ChatScreen(
+                          displayId: document.documentID,
+                          displayImage: document['photoUrl'],
                           currentUserId: currentUserId,
                           name: document['name'],
                         )));
-            },
+          },
           color: Colors.grey.withOpacity(0.3),
           padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(35.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(35.0)),
         ),
         margin: EdgeInsets.only(bottom: 5.0),
-
       );
+    
+    
     }
   }
 }

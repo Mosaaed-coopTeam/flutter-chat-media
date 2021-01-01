@@ -16,7 +16,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   bool showSpinner = false;
   final auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -27,23 +26,28 @@ class _LoginScreenState extends State<LoginScreen> {
   FirebaseUser currentUser;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isSignedIn();
   }
-  void isSignedIn() async{
+
+  void isSignedIn() async {
     this.setState(() {
-      showSpinner =true;
+      showSpinner = true;
     });
-    prefs= await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
 
     isLoggedIn = await googleSignIn.isSignedIn();
-    if(isLoggedIn){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen(currentUserId: prefs.getString('id'),)));
+    if (isLoggedIn) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomeScreen(
+                    currentUserId: prefs.getString('id'),
+                  )));
     }
 
     this.setState(() {
-      showSpinner=false;
+      showSpinner = false;
     });
   }
 
@@ -51,65 +55,64 @@ class _LoginScreenState extends State<LoginScreen> {
     prefs = await SharedPreferences.getInstance();
 
     this.setState(() {
-      showSpinner=true;
+      showSpinner = true;
     });
 
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
-        idToken: googleAuth.idToken,
-        accessToken: googleAuth.accessToken);
+        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
-    final FirebaseUser firebaseUser = (await auth.signInWithCredential(credential)).user;
+    final FirebaseUser firebaseUser =
+        (await auth.signInWithCredential(credential)).user;
 
-    if(firebaseUser!=null) {
-        final QuerySnapshot result = await Firestore.instance.collection(
-            'users')
-            .where('id', isEqualTo: firebaseUser.uid)
-            .getDocuments();
-        final List<DocumentSnapshot> documents = result.documents;
+    if (firebaseUser != null) {
+      final QuerySnapshot result = await Firestore.instance
+          .collection('users')
+          .where('id', isEqualTo: firebaseUser.uid)
+          .getDocuments();
+      final List<DocumentSnapshot> documents = result.documents;
 
-        if (documents.length == 0) {
-          Firestore.instance.collection('users')
-              .document(firebaseUser.uid)
-              .setData({
+      if (documents.length == 0) {
+        Firestore.instance
+            .collection('users')
+            .document(firebaseUser.uid)
+            .setData(
+          {
             'name': firebaseUser.displayName,
             'photoUrl': firebaseUser.photoUrl,
             'id': firebaseUser.uid,
-            'createdAt': DateTime
-                .now()
-                .millisecondsSinceEpoch
-                .toString(),
+            'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
             'chattingWith': null
-          });
+          },
+        );
 
-          currentUser = firebaseUser;
-          await prefs.setString('id', currentUser.uid);
-          await prefs.setString('name', currentUser.displayName);
-          await prefs.setString('photoUrl', currentUser.photoUrl);
-        }
-        else {
-          await prefs.setString('id', documents[0]['id']);
-          await prefs.setString('name', documents[0]['displayName']);
-          await prefs.setString('photoUrl', documents[0]['photoUrl']);
-          await prefs.setString('aboutMe', documents[0]['aboutMe']);
-        }
-        Fluttertoast.showToast(msg: "Sign in success");
-        this.setState(() {
-          showSpinner = false;
-        });
-        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-            HomeScreen(currentUserId: prefs.getString('id'))));
-
-    }
-    else{
+        currentUser = firebaseUser;
+        await prefs.setString('id', currentUser.uid);
+        await prefs.setString('name', currentUser.displayName);
+        await prefs.setString('photoUrl', currentUser.photoUrl);
+      } else {
+        await prefs.setString('id', documents[0]['id']);
+        await prefs.setString('name', documents[0]['displayName']);
+        await prefs.setString('photoUrl', documents[0]['photoUrl']);
+        await prefs.setString('aboutMe', documents[0]['aboutMe']);
+      }
+      Fluttertoast.showToast(msg: "Sign in success");
+      this.setState(() {
+        showSpinner = false;
+      });
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  HomeScreen(currentUserId: prefs.getString('id'))));
+    } else {
       Fluttertoast.showToast(msg: "Sign in fail");
       this.setState(() {
-        showSpinner=false;
+        showSpinner = false;
       });
     }
-
   }
 
   @override
@@ -136,8 +139,11 @@ class _LoginScreenState extends State<LoginScreen> {
               RoundedButton(
                 title: 'Log In with Google',
                 colour: Colors.lightBlueAccent,
-                onPressed: ()
-                {handleSignIn().then((FirebaseUser firebaseUser) => print(firebaseUser)).catchError((e)=>print(e));},
+                onPressed: () {
+                  handleSignIn()
+                      .then((FirebaseUser firebaseUser) => print(firebaseUser))
+                      .catchError((e) => print(e));
+                },
               ),
             ],
           ),
